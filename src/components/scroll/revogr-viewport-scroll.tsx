@@ -43,7 +43,9 @@ export class RevogrViewportScroll {
 
   connectedCallback(): void {
     this.scrollService = new LocalScrollService({
-      beforeScroll: e => this.scrollViewport.emit(e),
+      beforeScroll: e => {
+        this.scrollViewport.emit(e);
+      },
       afterScroll: e => {
         switch (e.dimension) {
           case 'col':
@@ -59,12 +61,18 @@ export class RevogrViewportScroll {
 
   componentDidLoad(): void {
     this.verticalMouseWheel = (e: WheelEvent) => {
+      if (e.defaultPrevented) {
+        return;
+      }
       e.preventDefault();
       const y = this.verticalScroll.scrollTop + e.deltaY;
       this.scrollService?.scroll(y, 'row');
       this.latestScrollUpdate('row');
     };
     this.horizontalMouseWheel = (e: WheelEvent) => {
+      if (e.defaultPrevented) {
+        return;
+      }
       e.preventDefault();
       const x = this.horizontalScroll.scrollLeft + e.deltaX;
       this.scrollService?.scroll(x, 'col');

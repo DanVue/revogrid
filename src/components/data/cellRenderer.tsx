@@ -5,11 +5,12 @@ import {DRAG_ICON_CLASS, DRAGGABLE_CLASS} from "../../utils/consts";
 
 type Props = {
     model: RevoGrid.ColumnDataSchemaModel;
+    renderer?: string;
     canDrag?: boolean;
     onDragStart?(e: MouseEvent): void;
 }
 
-const CellRenderer = ({model, canDrag, onDragStart}: Props, _children: VNode[]): (VNode|string)[] => {
+const CellRenderer = ({model, canDrag, renderer, onDragStart}: Props, _children: VNode[]): (VNode|string)[] => {
     const els: (VNode|string)[] = [];
     if (model.column.rowDrag && isRowDragService(model.column.rowDrag, model)) {
         if (canDrag) {
@@ -23,6 +24,18 @@ const CellRenderer = ({model, canDrag, onDragStart}: Props, _children: VNode[]):
         }
     }
     els.push(`${ColumnService.getData(model.model[model.prop])}`);
+    switch (renderer) {
+        case 'revoSelect':
+            els.push(<i class="arrow-down" onClick={(e: MouseEvent) => {
+                const ev = new MouseEvent('dblclick', {
+                    bubbles: true,
+                    cancelable: true,
+                    view: window
+                });
+                e.target.dispatchEvent(ev);
+            }}/>);
+            break;
+    }
     return els;
 };
 

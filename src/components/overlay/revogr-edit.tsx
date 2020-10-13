@@ -1,4 +1,5 @@
 import {Component, Event, EventEmitter, Prop, h, VNode, Element} from '@stencil/core';
+import { columnStorage } from '../../columnTypes/columnTypeStorage';
 
 import {Edition, RevoGrid} from '../../interfaces';
 import {TextEditor} from './editors/text';
@@ -10,7 +11,7 @@ import {TextEditor} from './editors/text';
 export class Edit {
     @Element() element: HTMLElement;
     @Prop() editCell: Edition.EditCell;
-    private currentEditor: Edition.EditorBase|null = null;
+    private currentEditor: Edition.EditorBase|VNode|null = null;
 
     @Prop() column: RevoGrid.ColumnRegular|null;
     /** Custom editors register */
@@ -35,21 +36,36 @@ export class Edit {
     }
 
     componentWillRender(): void {
-        if (!this.currentEditor) {
-            if (this.editor) {
-                this.currentEditor = new this.editor(
-                    this.column,
-                    (e, preventFocus) => this.onSave(e, preventFocus),
-                    () => this.closeEdit.emit()
-                );
-            } else {
-                this.currentEditor = new TextEditor(this.column, (e, preventFocus) => this.onSave(e, preventFocus));
+        if (this.currentEditor) {
+            return;
+        }
+        // custom editor
+        if (this.editor) {
+            this.currentEditor = new this.editor(
+                this.column,
+                (e, preventFocus) => this.onSave(e, preventFocus),
+                () => this.closeEdit.emit()
+            );
+            return;
+        }
+
+        // default editor
+        if (this.column.type && typeof this.column.type === 'string') {
+            const type = columnStorage[this.column.type];
+            if (type && type.editor) {
+                switch (type.editor) {
+                    case 'revoSelect':
+                        this.currentEditor = <revo-select/>;
+                        break;
+                }
+                return;
             }
         }
+        this.currentEditor = new TextEditor(this.column, (e, preventFocus) => this.onSave(e, preventFocus));
     }
 
     componentDidRender(): void {
-        if (!this.currentEditor) {
+        if (!this.currentEditor || this.isVNode(this.currentEditor)) {
             return;
         }
         this.currentEditor.element = this.element.firstElementChild;
@@ -57,7 +73,7 @@ export class Edit {
     }
 
     disconnectedCallback(): void {
-        if (!this.currentEditor) {
+        if (!this.currentEditor || this.isVNode(this.currentEditor)) {
             return;
         }
 
@@ -68,11 +84,18 @@ export class Edit {
         this.currentEditor = null;
     }
 
-    render() {
-        if (this.currentEditor) {
-            this.currentEditor.editCell = this.editCell;
-            return this.currentEditor.render(h as unknown as RevoGrid.HyperFunc<VNode>);
+    render(): VNode|void {
+        if (!this.currentEditor) {
+            return;
         }
-        return '';
+        if (this.isVNode(this.currentEditor)) {
+            return this.currentEditor;
+        }
+        this.currentEditor.editCell = this.editCell;
+        return this.currentEditor.render(h as unknown as RevoGrid.HyperFunc<VNode>);
+    }
+
+    private isVNode(el: Edition.EditorBase|VNode|null): el is VNode {
+        return el && !!(el as VNode).$tag$;
     }
 }

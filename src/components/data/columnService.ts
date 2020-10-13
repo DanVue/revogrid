@@ -10,6 +10,7 @@ import ColumnProp = RevoGrid.ColumnProp;
 import DataSource = RevoGrid.DataSource;
 import DataType = RevoGrid.DataType;
 import { getRange } from '../../store/selection/selection.helpers';
+import { columnStorage } from '../../columnTypes/columnTypeStorage';
 
 export interface ColumnServiceI {
   columns: RevoGrid.ColumnRegular[];
@@ -112,14 +113,23 @@ export default class ColumnService implements ColumnServiceI {
     return this.columns[c]?.editor;
   }
 
+  systemRenderer(_r: number, c: number): string|undefined {
+    const column = this.columns[c];
+    if (typeof column.type !== 'string') {
+      return undefined;
+    }
+    const type = columnStorage[column.type];
+    if (!type) {
+      return undefined;
+    }
+    return type.renderer;
+  }
+
   rowDataModel(rowIndex: number, c: number): ColumnDataSchemaModel {
     const column = this.columns[c];
     const prop: ColumnProp | undefined = column?.prop;
 
     const data: DataSource = this.dataStore.get('items');
-    if (!data[rowIndex]) {
-      console.error('unexpected count');
-    }
     const model: DataType = data[rowIndex] || {};
     return {prop, model, data, column, rowIndex};
   }

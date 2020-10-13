@@ -66,6 +66,7 @@ export declare namespace RevoGrid {
     sortable?: boolean;
     order?: 'asc'|'desc';
 
+    type?: string| {[prop: string]: any};
 
     /** custom editor key if present */
     editor?: string;

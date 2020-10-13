@@ -21,7 +21,10 @@ export function generateFakeDataObject(rowsNumber, colsNumber) {
                 // readonly: !!(col%5),
                 //rowDrag: j === 2,
             }
-            if (col === 1) {
+            if (col === 2) {
+                // columns[col].editor = 'revoSelect';
+
+                columns[col].type = 'select';
                 /*
                 cellTemplate: (h, props) => {
                     return h('div', {

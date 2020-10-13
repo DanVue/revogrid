@@ -46,5 +46,14 @@ revogr-data {
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+
+		.arrow-down {
+			font-size: 11px;
+			color: gray;
+			float: right;
+			&:before {
+				content: '▼';
+			}
+		}
 	}
 }

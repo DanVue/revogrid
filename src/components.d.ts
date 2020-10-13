@@ -95,6 +95,8 @@ export namespace Components {
          */
         "theme": ThemeSpace.Theme;
     }
+    interface RevoSelect {
+    }
     interface RevogrClipboard {
         "doCopy": (e: DataTransfer, data?: RevoGrid.DataFormat[][]) => Promise<void>;
     }
@@ -223,6 +225,12 @@ declare global {
         prototype: HTMLRevoGridElement;
         new (): HTMLRevoGridElement;
     };
+    interface HTMLRevoSelectElement extends Components.RevoSelect, HTMLStencilElement {
+    }
+    var HTMLRevoSelectElement: {
+        prototype: HTMLRevoSelectElement;
+        new (): HTMLRevoSelectElement;
+    };
     interface HTMLRevogrClipboardElement extends Components.RevogrClipboard, HTMLStencilElement {
     }
     var HTMLRevogrClipboardElement: {
@@ -291,6 +299,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "revo-grid": HTMLRevoGridElement;
+        "revo-select": HTMLRevoSelectElement;
         "revogr-clipboard": HTMLRevogrClipboardElement;
         "revogr-data": HTMLRevogrDataElement;
         "revogr-edit": HTMLRevogrEditElement;
@@ -420,6 +429,8 @@ declare namespace LocalJSX {
           * Theme name
          */
         "theme"?: ThemeSpace.Theme;
+    }
+    interface RevoSelect {
     }
     interface RevogrClipboard {
         "onCopyRegion"?: (event: CustomEvent<DataTransfer>) => void;
@@ -592,6 +603,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "revo-grid": RevoGrid;
+        "revo-select": RevoSelect;
         "revogr-clipboard": RevogrClipboard;
         "revogr-data": RevogrData;
         "revogr-edit": RevogrEdit;
@@ -610,6 +622,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "revo-grid": LocalJSX.RevoGrid & JSXBase.HTMLAttributes<HTMLRevoGridElement>;
+            "revo-select": LocalJSX.RevoSelect & JSXBase.HTMLAttributes<HTMLRevoSelectElement>;
             "revogr-clipboard": LocalJSX.RevogrClipboard & JSXBase.HTMLAttributes<HTMLRevogrClipboardElement>;
             "revogr-data": LocalJSX.RevogrData & JSXBase.HTMLAttributes<HTMLRevogrDataElement>;
             "revogr-edit": LocalJSX.RevogrEdit & JSXBase.HTMLAttributes<HTMLRevogrEditElement>;

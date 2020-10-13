@@ -5,13 +5,13 @@ export interface ElementScroll {
 }
 export default class GridScrollingService {
     private elements: ElementScroll[] = [];
-    constructor(private setViewport: (e: RevoGrid.ViewPortScrollEvent) => void) {}
+    constructor(private setViewport?: (e: RevoGrid.ViewPortScrollEvent) => void) {}
 
     onScroll(e: RevoGrid.ViewPortScrollEvent, key?: RevoGrid.DimensionColPin|string): void {
         if (this.isPinnedColumn(key) && e.dimension === 'col') {
             return;
         }
-        this.setViewport(e);
+        this.setViewport && this.setViewport(e);
         for (let el of this.elements) {
             el?.setScroll(e);
         }

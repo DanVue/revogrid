@@ -77,13 +77,19 @@ export class RevogrData {
     };
     const props = this.columnService.cellProperties(row.itemIndex, col.itemIndex, defaultProps);
     const custom = this.columnService.customRenderer(row.itemIndex, col.itemIndex);
+
+    // if custom renderer
     if (typeof custom !== 'undefined') {
       return <div {...props}>{custom}</div>;
     }
+
+    // default renderers
     const model = this.columnService.rowDataModel(row.itemIndex, col.itemIndex);
+    const renderer = this.columnService.systemRenderer(row.itemIndex, col.itemIndex);
     return <div {...props}>
       <CellRenderer
         model={model}
+        renderer={renderer}
         canDrag={this.canDrag}
         onDragStart={(e) => this.dragStartCell.emit(e)}/>
     </div>;
